@@ -5,22 +5,26 @@
 
 buildscript {
     ext {
-        opensearch_group = "org.opensearch"
-        opensearch_version = System.getProperty("opensearch.version", "3.0.0-SNAPSHOT")
+        opensearch_version = System.getProperty("ratudb.version", "2.2.2-SNAPSHOT")
         isSnapshot = "true" == System.getProperty("build.snapshot", "true")
         buildVersionQualifier = System.getProperty("build.version_qualifier", "")
         kotlin_version = System.getProperty("kotlin.version", "1.8.21")
     }
 
     repositories {
-        mavenLocal()
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
+        maven {
+            url = 'https://packages.aliyun.com/641280a5b6809992bb8fed9a/maven/ratu-tech'
+            credentials {
+                username = "${System.env.ALIYUN_USERNAME}"
+                password = "${System.env.ALIYUN_PASSWORD}"
+            }
+        }
     }
 
     dependencies {
-        classpath "${opensearch_group}.gradle:build-tools:${opensearch_version}"
+        classpath "com.ratutech.ratudb:build-tools:${opensearch_version}"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
         classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlin_version}"
 //        classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:1.20.0-RC1"
@@ -37,18 +41,18 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven { url "https://plugins.gradle.org/m2/" }
-    maven { url "https://aws.oss.sonatype.org/content/repositories/snapshots" }
+    maven {
+        url = 'https://packages.aliyun.com/641280a5b6809992bb8fed9a/maven/ratu-tech'
+        credentials {
+            username = "${System.env.ALIYUN_USERNAME}"
+            password = "${System.env.ALIYUN_PASSWORD}"
+        }
+    }
 }
 
 allprojects {
-    group 'org.opensearch.commons'
-    version = opensearch_version.tokenize('-')[0] + '.0'
-    if (buildVersionQualifier) {
-        version += "-${buildVersionQualifier}"
-    }
-    if (isSnapshot) {
-        version += "-SNAPSHOT"
-    }
+    group 'com.ratutech.ratudb.commons'
+    version = opensearch_version
 }
 
 targetCompatibility = JavaVersion.VERSION_11
@@ -75,13 +79,13 @@ configurations {
 }
 
 dependencies {
-    compileOnly "org.opensearch.client:opensearch-rest-high-level-client:${opensearch_version}"
+    compileOnly "com.ratutech.ratudb.client:ratudb-rest-high-level-client:${opensearch_version}"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-common:${kotlin_version}"
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3" // ${kotlin_version} does not work for coroutines
     compileOnly "com.cronutils:cron-utils:9.1.6"
     compileOnly "commons-validator:commons-validator:1.7"
-    testImplementation "org.opensearch.test:framework:${opensearch_version}"
+    testImplementation "com.ratutech.ratudb.test:framework:${opensearch_version}"
     testImplementation "org.jetbrains.kotlin:kotlin-test:${kotlin_version}"
     testImplementation "org.mockito:mockito-core:3.10.0"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
@@ -174,31 +178,31 @@ publishing {
         }
         maven {
             name = "Snapshots"
-            url = "https://aws.oss.sonatype.org/content/repositories/snapshots"
+            url = 'https://packages.aliyun.com/641280a5b6809992bb8fed9a/maven/ratu-tech'
             credentials {
-                username "$System.env.SONATYPE_USERNAME"
-                password "$System.env.SONATYPE_PASSWORD"
+                username = "${System.env.ALIYUN_USERNAME}"
+                password = "${System.env.ALIYUN_PASSWORD}"
             }
         }
     }
     publications {
         shadow(MavenPublication) {
             project.shadow.component(it)
-            groupId = 'org.opensearch'
+            groupId = 'com.ratutech.ratudb.common'
             artifactId = 'common-utils'
 
             artifact sourcesJar
             artifact javadocJar
 
             pom {
-                name = "OpenSearch Common Utils"
+                name = "RatuDB Common Utils"
                 packaging = "jar"
-                url = "https://github.com/opensearch-project/common-utils"
-                description = "OpenSearch Common Utils"
+                url = "https://github.com/xiaodizi/common-utils"
+                description = "RatuDB Common Utils"
                 scm {
-                    connection = "scm:git@github.com:opensearch-project/common-utils.git"
-                    developerConnection = "scm:git@github.com:opensearch-project/common-utils.git"
-                    url = "git@github.com:opensearch-project/common-utils.git"
+                    connection = "scm:git@github.com:xiaodizi/common-utils.git"
+                    developerConnection = "scm:git@github.com:xiaodizi/common-utils.git"
+                    url = "git@github.com:xiaodizi/common-utils.git"
                 }
                 licenses {
                     license {

@@ -216,6 +216,11 @@ publishing {
                         organization = "Amazon Web Services"
                         organizationUrl = "https://aws.amazon.com"
                     }
+                    developer {
+                        id = "RatuDB"
+                        organization = "RatuTech"
+                        organizationUrl = "https://ratutech.com/"
+                    }
                 }
             }
         }

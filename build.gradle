@@ -5,7 +5,7 @@
 
 buildscript {
     ext {
-        opensearch_version = System.getProperty("ratudb.version", "2.2.2-SNAPSHOT")
+        opensearch_version = System.getProperty("ratudb.version", "2.2.2")
         isSnapshot = "true" == System.getProperty("build.snapshot", "true")
         buildVersionQualifier = System.getProperty("build.version_qualifier", "")
         kotlin_version = System.getProperty("kotlin.version", "1.8.21")
@@ -14,13 +14,6 @@ buildscript {
     repositories {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
-        maven {
-            url = 'https://packages.aliyun.com/641280a5b6809992bb8fed9a/maven/ratu-tech'
-            credentials {
-                username = "${System.env.ALIYUN_USERNAME}"
-                password = "${System.env.ALIYUN_PASSWORD}"
-            }
-        }
     }
 
     dependencies {
@@ -38,16 +31,8 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { url "https://plugins.gradle.org/m2/" }
-    maven {
-        url = 'https://packages.aliyun.com/641280a5b6809992bb8fed9a/maven/ratu-tech'
-        credentials {
-            username = "${System.env.ALIYUN_USERNAME}"
-            password = "${System.env.ALIYUN_PASSWORD}"
-        }
-    }
 }
 
 allprojects {
@@ -176,14 +161,6 @@ publishing {
             name = 'staging'
             url = "${rootProject.buildDir}/local-staging-repo"
         }
-        maven {
-            name = "Snapshots"
-            url = 'https://packages.aliyun.com/641280a5b6809992bb8fed9a/maven/ratu-tech'
-            credentials {
-                username = "${System.env.ALIYUN_USERNAME}"
-                password = "${System.env.ALIYUN_PASSWORD}"
-            }
-        }
     }
     publications {
         shadow(MavenPublication) {
@@ -223,6 +200,12 @@ publishing {
                     }
                 }
             }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
         }
     }
 
